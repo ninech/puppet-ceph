@@ -48,6 +48,16 @@
 # [*fsid*] The ceph cluster FSID
 #   Optional. Defaults to $::ceph::profile::params::fsid
 #
+# [*crush_location*] The crush location of the OSD
+#   Optional. Defaults to undef.
+#   This will add an entry to the file specified in ::ceph::params::osd_crush_location_file. The format of the entry will be:
+#
+#   <OSD path>: <crush location>
+#
+#   When specifying the location you need to pass all the buckets (e.g. 'root=<root> rack=<rack> host=<host> type=<type>')
+#   and the buckets must already exist. If given you also need to set ::ceph::params::osd_crush_location_hook. You will find
+#   an example of the hook in the examples directory.
+#
 define ceph::osd (
   $ensure = present,
   $journal = "''",
@@ -55,6 +65,7 @@ define ceph::osd (
   $exec_timeout = $::ceph::params::exec_timeout,
   $selinux_file_context = 'ceph_var_lib_t',
   $fsid = $::ceph::profile::params::fsid,
+  $crush_location = undef,
   ) {
 
     include ::ceph::params
@@ -69,6 +80,18 @@ define ceph::osd (
     $cluster_option = "--cluster ${cluster_name}"
 
     if $ensure == present {
+
+      if $crush_location {
+        if !defined(Concat[$::ceph::profile::params::crush_location_store]) {
+          notify{'Please specify ceph::profile::params::crush_location_store when using crush_location for OSDs': }
+        } else {
+          concat::fragment {
+            "location_for_${data}_on_${::hostname}":
+              target  => $::ceph::profile::params::crush_location_store,
+              content => "${data}: ${crush_location}\n";
+          }
+        }
+      }
 
       $ceph_check_udev = "ceph-osd-check-udev-${name}"
       $ceph_prepare = "ceph-osd-prepare-${name}"

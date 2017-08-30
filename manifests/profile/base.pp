@@ -51,6 +51,8 @@ class ceph::profile::base {
     osd_recovery_max_single_start => $ceph::profile::params::osd_recovery_max_single_start,
     osd_max_scrubs                => $ceph::profile::params::osd_max_scrubs,
     osd_op_threads                => $ceph::profile::params::osd_op_threads,
+    osd_crush_location_hook       => $ceph::profile::params::osd_crush_location_hook,
+    osd_crush_location_store      => $ceph::profile::params::osd_crush_location_store,
     rbd_default_features          => $ceph::profile::params::rbd_default_features,
   }
 }

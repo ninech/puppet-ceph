@@ -204,6 +204,8 @@ class ceph::profile::params (
   $osd_pool_default_size = undef,
   $osd_pool_default_min_size = undef,
   $osd_crush_update_on_start = undef,
+  $osd_crush_location_hook = undef,
+  $osd_crush_location_store = undef,
   $cluster_network = undef,
   $public_network = undef,
   $public_addr = undef,
