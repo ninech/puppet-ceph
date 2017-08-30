@@ -152,6 +152,8 @@ class ceph (
   $osd_pool_default_min_size     = undef,
   $osd_pool_default_crush_rule   = undef,
   $osd_crush_update_on_start     = undef,
+  $osd_crush_location_hook       = undef,
+  $osd_crush_location_store      = undef,
   $mon_osd_full_ratio            = undef,
   $mon_osd_nearfull_ratio        = undef,
   $mon_initial_members           = undef,
@@ -213,6 +215,21 @@ this module to assign values and will be removed in a future release.')
       'global/public_addr':                  value => $public_addr;
       'osd/osd_journal_size':                value => $osd_journal_size;
       'client/rbd_default_features':         value => $rbd_default_features;
+    }
+
+    if $osd_crush_location_hook {
+      ceph_config {
+        'global/osd_crush_location_hook':    value => $osd_crush_location_hook;
+      }
+    }
+
+    if $osd_crush_location_store:
+      concat {
+        $osd_crush_location_store:
+          ensure => present;
+      }
+
+      Concat[$osd_crush_location_store] -> Ceph::Osd <| |>
     }
 
 
