@@ -208,9 +208,11 @@ not on ${::operatingsystem}, which can lead to packaging issues.")
         }
 
         # prefer ceph.com repos over EPEL
-        package { 'yum-plugin-priorities':
-          ensure => present,
-        }
+        ensure_packages(
+          [
+            'yum-plugin-priorities',
+          ]
+        )
       }
 
       if $enable_epel {
